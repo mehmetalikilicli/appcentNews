@@ -5,6 +5,8 @@ class NewsDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("news details page");
+    return Scaffold(
+      body: Center(child: Text("asd")),
+    );
   }
 }
