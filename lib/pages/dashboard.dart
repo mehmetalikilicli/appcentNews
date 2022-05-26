@@ -14,32 +14,76 @@ class AllNews extends StatefulWidget {
 
 class _AllNewsState extends State<AllNews> {
   String url =
-      "https://newsapi.org/v2/everything?q=galatasaray&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
+      "https://newsapi.org/v2/everything?q=uygulama&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: News(),
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            News(),
+            searchTextField(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextField searchTextField() {
+    return const TextField(
+      decoration: InputDecoration(
+          fillColor: Colors.black,
+          hoverColor: Colors.black,
+          focusColor: Colors.black,
+          border: OutlineInputBorder(),
+          labelText: 'Search',
+          labelStyle: TextStyle(color: Colors.white)),
     );
   }
 
   FutureBuilder<AppcentNews> News() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return FutureBuilder(
       future: _getNews(),
       builder: (context, AsyncSnapshot<AppcentNews> snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
+            shrinkWrap: true,
             itemCount: snapshot.data!.articles.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(snapshot.data!.articles[index].author.toString()),
-                onTap: () {
-                  debugPrint("Yonlendiriliyor");
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => NewsDetails(),
+              return Padding(
+                padding: const EdgeInsets.only(
+                  top: 6,
+                  bottom: 6,
+                ),
+                child: Container(
+                  height: height * 0.11,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: ListTile(
+                      leading: Image.network(
+                        snapshot.data!.articles[index].urlToImage,
+                      ),
+                      title: Text(
+                        snapshot.data!.articles[index].title.toString(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        debugPrint("Yonlendiriliyor");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => NewsDetails(),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ),
               );
             },
           );
