@@ -1,7 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:appcentnews/model/news_model.dart';
-import 'package:appcentnews/pages/news_details.dart';
+import 'package:appcentnews/pages/news_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,45 +15,56 @@ class AllNews extends StatefulWidget {
 }
 
 class _AllNewsState extends State<AllNews> {
+  TextEditingController searchConroller = TextEditingController();
   String url =
-      "https://newsapi.org/v2/everything?q=uygulama&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
+      "https://newsapi.org/v2/everything?q=türkiye&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            News(),
-            searchTextField(),
+            Container(
+              color: Colors.red,
+              height: 100,
+            ),
+            Container(
+              height: height * 0.7,
+              child: News(height),
+            ),
+            //searchNews()
           ],
         ),
       ),
     );
   }
 
-  TextField searchTextField() {
-    return const TextField(
-      decoration: InputDecoration(
-          fillColor: Colors.black,
-          hoverColor: Colors.black,
-          focusColor: Colors.black,
-          border: OutlineInputBorder(),
-          labelText: 'Search',
-          labelStyle: TextStyle(color: Colors.white)),
+  Widget searchNews() {
+    return Container(
+      height: 100,
+      child: TextField(
+        controller: searchConroller,
+        decoration: InputDecoration(
+            fillColor: Colors.white,
+            hoverColor: Colors.white,
+            focusColor: Colors.black,
+            border: OutlineInputBorder(),
+            labelText: 'Search',
+            labelStyle: TextStyle(color: Colors.white)),
+      ),
     );
   }
 
-  FutureBuilder<AppcentNews> News() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+  FutureBuilder<AppcentNews> News(double height) {
     return FutureBuilder(
       future: _getNews(),
       builder: (context, AsyncSnapshot<AppcentNews> snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
-            shrinkWrap: true,
             itemCount: snapshot.data!.articles.length,
             itemBuilder: (context, index) {
               return Padding(
@@ -77,7 +90,8 @@ class _AllNewsState extends State<AllNews> {
                         debugPrint("Yonlendiriliyor");
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => NewsDetails(),
+                            builder: (context) =>
+                                NewsDetails(snapshot.data!.articles[index]),
                           ),
                         );
                       },
