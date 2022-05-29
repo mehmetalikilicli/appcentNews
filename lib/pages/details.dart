@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, must_be_immutable
 
 import 'package:appcentnews/model/news_model.dart';
+import 'package:appcentnews/pages/webview.dart';
 import 'package:flutter/material.dart';
 
 class NewsDetails extends StatefulWidget {
@@ -36,7 +37,10 @@ class _NewsDetailsState extends State<NewsDetails> {
                 ),
               ],
             ),
-            Text(newsDetails.title),
+            Text(
+              newsDetails.title,
+              style: TextStyle(color: Colors.white),
+            ),
             Text(
               "Kaynak: " + newsDetails.source.name,
               style: TextStyle(color: Colors.white),
@@ -52,6 +56,19 @@ class _NewsDetailsState extends State<NewsDetails> {
             Text(
               newsDetails.content,
               style: TextStyle(color: Colors.white),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Webview(newsDetails.url)),
+                );
+              },
+              child: Text(
+                "Haber Kaynagi",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),

@@ -40,6 +40,7 @@ class Article {
     required this.urlToImage,
     required this.publishedAt,
     required this.content,
+    required this.isFavorite,
   });
 
   final Source source;
@@ -50,6 +51,7 @@ class Article {
   final String urlToImage;
   final DateTime publishedAt;
   final String content;
+  bool isFavorite = false;
 
   factory Article.fromMap(Map<String, dynamic> json) => Article(
         source: Source.fromMap(json["source"]),
@@ -60,6 +62,7 @@ class Article {
         urlToImage: json["urlToImage"],
         publishedAt: DateTime.parse(json["publishedAt"]),
         content: json["content"],
+        isFavorite: false,
       );
 
   Map<String, dynamic> toMap() => {

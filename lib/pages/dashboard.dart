@@ -3,43 +3,80 @@
 import 'dart:convert';
 
 import 'package:appcentnews/model/news_model.dart';
-import 'package:appcentnews/pages/news_details_page.dart';
+import 'package:appcentnews/pages/details.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class AllNews extends StatefulWidget {
-  AllNews({Key? key}) : super(key: key);
+List<Article> favoriteList = [];
+
+class Dashboard extends StatefulWidget {
+  Dashboard({Key? key}) : super(key: key);
 
   @override
-  State<AllNews> createState() => _AllNewsState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class _AllNewsState extends State<AllNews> {
+class _DashboardState extends State<Dashboard> {
+  String tempKey = "besiktas";
+  bool isClicked = false;
+  bool isFavorite = false;
   TextEditingController searchConroller = TextEditingController();
-  String url =
-      "https://newsapi.org/v2/everything?q=türkiye&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
 
   @override
   Widget build(BuildContext context) {
+    int selectedMenuItem = 0;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.red,
-              height: 100,
-            ),
-            Container(
-              height: height * 0.7,
-              child: News(height),
-            ),
-            //searchNews()
-          ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              search(height),
+              Container(
+                height: height * 0.81,
+                child: News(height),
+              ),
+              //searchNews()
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Stack search(double height) {
+    return Stack(
+      children: [
+        Container(
+          height: height * 0.08,
+          child: TextField(
+            controller: searchConroller,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                hoverColor: Colors.white,
+                focusColor: Colors.black,
+                border: OutlineInputBorder(),
+                labelText: 'Search',
+                labelStyle: TextStyle(color: Colors.white)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 320),
+          child: IconButton(
+            onPressed: () {
+              setState(() {
+                tempKey = searchConroller.text;
+              });
+            },
+            icon: Icon(Icons.search),
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
   }
 
@@ -79,9 +116,11 @@ class _AllNewsState extends State<AllNews> {
                       borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: ListTile(
-                      leading: Image.network(
-                        snapshot.data!.articles[index].urlToImage,
-                      ),
+                      leading: Container(
+                          width: 110,
+                          child: Image.network(
+                              snapshot.data!.articles[index].urlToImage,
+                              fit: BoxFit.contain)),
                       title: Text(
                         snapshot.data!.articles[index].title.toString(),
                         style: TextStyle(color: Colors.white),
@@ -95,6 +134,35 @@ class _AllNewsState extends State<AllNews> {
                           ),
                         );
                       },
+                      trailing: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (!snapshot.data!.articles[index].isFavorite) {
+                              snapshot.data!.articles[index].isFavorite = true;
+                              favoriteList.add(snapshot.data!.articles[index]);
+                            }
+                          });
+
+                          /*if (favoriteList
+                                .contains(snapshot.data!.articles[index])) {
+                              favoriteList
+                                  .remove(snapshot.data!.articles[index]);
+                              snapshot.data!.articles[index].isFavorite =
+                                  !snapshot.data!.articles[index].isFavorite;
+                              for (int i = 0; i < favoriteList.length; i++) {
+                                print(i);
+                              }
+                            } else {
+                              favoriteList.add(snapshot.data!.articles[index]);
+                              snapshot.data!.articles[index].isFavorite =
+                                  !snapshot.data!.articles[index].isFavorite;
+                            }*/
+                        },
+                        icon: Icon(Icons.favorite,
+                            color: snapshot.data!.articles[index].isFavorite
+                                ? Colors.red
+                                : Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -111,6 +179,9 @@ class _AllNewsState extends State<AllNews> {
   }
 
   Future<AppcentNews> _getNews() async {
+    String url = "https://newsapi.org/v2/everything?q=" +
+        tempKey +
+        "&page=1&apiKey=16035afb911b4a4281ccde6e3de9f0e0";
     var response = await http.get(
       Uri.parse(url),
     );
