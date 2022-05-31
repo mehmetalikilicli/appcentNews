@@ -1,5 +1,5 @@
 import 'package:appcentnews/model/news_model.dart';
-import 'package:appcentnews/pages/dashboard.dart';
+import 'package:appcentnews/pages/news.dart';
 import 'package:appcentnews/pages/details.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +20,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.black,
       body: ListView.builder(
         itemCount: favoritesList.length,
         itemBuilder: (context, index) {
@@ -29,19 +30,31 @@ class _FavoritesPageState extends State<FavoritesPage> {
               bottom: 6,
             ),
             child: Container(
-              height: height * 0.11,
+              height: height * 0.13,
               decoration: BoxDecoration(
                   color: Colors.grey.shade800,
                   borderRadius: BorderRadius.circular(10)),
               child: Center(
                 child: ListTile(
                   leading: Container(
-                      width: 110,
-                      child: Image.network(favoritesList[index].urlToImage,
-                          fit: BoxFit.contain)),
+                    width: 110,
+                    child: Image.network(favoritesList[index].urlToImage,
+                        fit: BoxFit.contain),
+                  ),
                   title: Text(
-                    favoritesList[index].title.toString(),
-                    style: TextStyle(color: Colors.white),
+                    favoritesList[index].title.toString() + "\n", //+
+                    // snapshot.data!.articles[index].description,
+                    //Aciklamalar ve basliklar cok uzun oldugu icin sadece basliklari ekledim
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                  subtitle: Text(
+                    "Date: " +
+                        (favoritesList[index].publishedAt.toString())
+                            .substring(0, 10) +
+                        "\n" +
+                        "Source: " +
+                        favoritesList[index].source.name,
+                    style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                   onTap: () {
                     debugPrint("Yonlendiriliyor");

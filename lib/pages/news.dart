@@ -36,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               search(height),
               Container(
-                height: height * 0.81,
+                height: height * 0.8,
                 child: News(height),
               ),
               //searchNews()
@@ -80,6 +80,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  //search bolumu
   Widget searchNews() {
     return Container(
       height: 100,
@@ -96,6 +97,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+// her bir haberin basıldığı widget
   FutureBuilder<AppcentNews> News(double height) {
     return FutureBuilder(
       future: _getNews(),
@@ -109,21 +111,35 @@ class _DashboardState extends State<Dashboard> {
                   top: 6,
                   bottom: 6,
                 ),
-                child: Container(
-                  height: height * 0.11,
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Center(
+                child: Center(
+                  child: Container(
+                    height: height * 0.13,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade900,
+                        borderRadius: BorderRadius.circular(10)),
                     child: ListTile(
-                      leading: Container(
-                          width: 110,
-                          child: Image.network(
-                              snapshot.data!.articles[index].urlToImage,
-                              fit: BoxFit.contain)),
                       title: Text(
-                        snapshot.data!.articles[index].title.toString(),
-                        style: TextStyle(color: Colors.white),
+                        snapshot.data!.articles[index].title.toString() +
+                            "\n", //+
+                        // snapshot.data!.articles[index].description,
+                        //Aciklamalar ve basliklar cok uzun oldugu icin sadece basliklari ekledim
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                      leading: Container(
+                        width: 110,
+                        child: Image.network(
+                            snapshot.data!.articles[index].urlToImage,
+                            fit: BoxFit.contain),
+                      ),
+                      subtitle: Text(
+                        "Date: " +
+                            (snapshot.data!.articles[index].publishedAt
+                                    .toString())
+                                .substring(0, 10) +
+                            "\n" +
+                            "Source: " +
+                            snapshot.data!.articles[index].source.name,
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                       onTap: () {
                         debugPrint("Yonlendiriliyor");
@@ -178,6 +194,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  //apiden verilerin alındığı widget
   Future<AppcentNews> _getNews() async {
     String url = "https://newsapi.org/v2/everything?q=" +
         tempKey +
